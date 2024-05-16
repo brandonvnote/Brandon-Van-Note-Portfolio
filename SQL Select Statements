@@ -17,8 +17,8 @@ ORDER BY
     MONTH(PurchaseOrder.PODateNeeded) DESC,
     PurchaseOrder.PODateNeeded DESC;
 
---Summarizes the receiving status of every line with the PurchaseOrderLine table
---CASE statements for receiving statuses
+--**Summarizes the receiving status of every line with the PurchaseOrderLine table**
+--**CASE statements for receiving statuses**
 SELECT
     PurchaseOrder.PONumber,
     Vendor.VendorName,
