@@ -1,0 +1,57 @@
+--A variety of select statements using the PurchaseOrder Database created before
+
+--Retrieves all purchase orders that are needed within a certain month range
+SELECT 
+    PurchaseOrder.PODateNeeded,
+    PurchaseOrder.PONumber,
+    PurchaseOrder.PODatePlaced,
+    Vendor.VendorName,
+CONCAT('(', LEFT(LTRIM(RTRIM(Vendor.VendorPhone)), 3), ') ', SUBSTRING(LTRIM(RTRIM(Vendor.VendorPhone)), 4, 3), '-', RIGHT(LTRIM(RTRIM(Vendor.VendorPhone)), 4)) AS VendorPhoneNumber,
+PurchaseOrder.BuyerEmpID
+FROM PurchaseOrder
+JOIN Vendor ON PurchaseOrder.VendorID = Vendor.VendorID
+WHERE 
+    MONTH(PurchaseOrder.PODateNeeded) IN (3, 4)
+    AND YEAR(PurchaseOrder.PODateNeeded) = YEAR(GETDATE())
+ORDER BY 
+    MONTH(PurchaseOrder.PODateNeeded) DESC,
+    PurchaseOrder.PODateNeeded DESC;
+
+--Finds Vendors who do not have reviews joining Vendor table and VendorReview Table
+SELECT
+  Vendor.VendorID,
+  Vendor.VendorName,
+  Vendor.VendorEmail,
+  Vendor.FirstBuyDate
+FROM Vendor
+LEFT JOIN VendorReview ON Vendor.VendorID = VendorReview.VendorID
+WHERE VendorReview.VendorID IS NULL;
+
+--Lists all products in the reciever table that were recieved in a damaged state
+--Utilizes a LIKE condition to find all instances of "damage"
+SELECT 
+    PurchaseOrderLine.POLineId,
+    Receiver.QtyReceived,
+    Condition.ConditionDescription
+FROM PurchaseOrderLine
+JOIN Receiver ON PurchaseOrderLine.POLineID = Receiver.POLineID
+JOIN Condition ON Receiver.ConditionID = Condition.ConditionID
+WHERE 
+LOWER(ConditionDescription) LIKE '%damage%'
+ORDER BY 
+PurchaseOrderLine.POLineID ASC;
+
+--Summarized Report of about each product within the product table
+--Includes how many orders, quantity ordered, Max, Min and Average Price Paid
+SELECT
+  Product.ProductId,
+  Product.ProductDescription,
+  ISNULL(COUNT(DISTINCT PurchaseOrderLine.PONumber), 0) AS CountofPurchaseOrders,
+  ISNULL(SUM(PurchaseOrderLine.QtyOrdered), 0) AS TotalQuantityOrdered,
+  ISNULL(MAX(PurchaseOrderLine.Price), 0) AS MaxPricePaid,
+  ISNULL(MIN(PurchaseOrderLine.Price), 0) AS MinPricePaid,
+  ISNULL(AVG(PurchaseOrderLine.Price), 0) AS AveragePricePaid
+FROM Product
+LEFT JOIN PurchaseOrderLine ON Product.ProductID = PurchaseOrderLine.ProductID
+GROUP BY Product.ProductID,Product.ProductDescription
+ORDER BY Product.ProductID;
