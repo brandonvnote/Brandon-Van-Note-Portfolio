@@ -1,5 +1,5 @@
 # Brandon Van Note's Portfolio
-Welcome to my portfolio! This repository showcases my journey and expertise in multiple different coding languages. It includes various solo projects and exercises I have completed!
+Welcome to my portfolio! This repository showcases my journey and expertise in multiple different coding languages. It includes various solo projects and exercises I have completed.
 ## Below I have highlighted a few projects:
 
 ### Contact Info:
