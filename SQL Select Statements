@@ -1,6 +1,7 @@
---A variety of select statements using the PurchaseOrder Database created before
+**A variety of select statements using the PurchaseOrder Database created before**
 
---Retrieves all purchase orders that are needed within a certain month range
+**Retrieves all purchase orders that are needed within a certain month range**
+
 SELECT 
     PurchaseOrder.PODateNeeded,
     PurchaseOrder.PONumber,
@@ -17,8 +18,9 @@ ORDER BY
     MONTH(PurchaseOrder.PODateNeeded) DESC,
     PurchaseOrder.PODateNeeded DESC;
 
---**Summarizes the receiving status of every line with the PurchaseOrderLine table**
---**CASE statements for receiving statuses**
+**Summarizes the receiving status of every line with the PurchaseOrderLine table**
+**CASE statements for receiving statuses**
+
 SELECT
     PurchaseOrder.PONumber,
     Vendor.VendorName,
@@ -52,8 +54,9 @@ GROUP BY
     PurchaseOrderLine.DateNeeded,
     PurchaseOrderLine.QtyOrdered;
 
---Lists all products in the reciever table that were recieved in a damaged state
---Utilizes a LIKE condition to find all instances of "damage"
+**Lists all products in the reciever table that were recieved in a damaged state**
+**Utilizes a LIKE condition to find all instances of "damage"**
+
 SELECT 
     PurchaseOrderLine.POLineId,
     Receiver.QtyReceived,
@@ -66,8 +69,9 @@ LOWER(ConditionDescription) LIKE '%damage%'
 ORDER BY 
 PurchaseOrderLine.POLineID ASC;
 
---Summarized Report of about each product within the product table
---Includes how many orders, quantity ordered, Max, Min and Average Price Paid
+**Summarized Report of about each product within the product table**
+**Includes how many orders, quantity ordered, Max, Min and Average Price Paid**
+
 SELECT
   Product.ProductId,
   Product.ProductDescription,
