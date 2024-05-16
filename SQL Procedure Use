@@ -1,0 +1,35 @@
+--Wrote a stored procedure that creates and populates one new table.
+-- Execute the procedure and SELECT statement
+
+CREATE PROCEDURE ClosedPurchaseOrdersToPOClosed
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+  
+    INSERT INTO tblPOClosed (PoNumber, PODatePlaced, PODateNeeded, Terms, Conditions, BuyerEmpID, VendorID, DateMoved)
+    SELECT DISTINCT
+    po.PONumber,
+    po.PODatePlaced,
+    po.PODateNeeded,
+    po.Terms,
+    po.Conditions,
+    po.BuyerEmpID,
+    po.VendorID,
+    GETDATE() AS datemoved
+FROM
+    PurchaseOrder po
+WHERE EXISTS (
+SELECT
+1
+      FROM PurchaseOrderLine pol
+      JOIN Receiver r ON pol.POLineID = r.POLineID
+WHERE
+      pol.PONumber = po.PONumber
+      AND (pol.QtyOrdered < r.QtyReceived OR pol.QtyOrdered = r.QtyReceived)
+);
+END;
+
+EXEC ClosedPurchaseOrdersToPOClosed
+
+SELECT * FROM tblPOClosed;
