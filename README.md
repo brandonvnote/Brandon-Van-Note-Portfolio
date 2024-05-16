@@ -5,6 +5,6 @@ Welcome to my portfolio! This repository showcases my journey and expertise in m
 ### Contact Info:
 For any queries or further information, feel free to reach out to me:
 
-Email: your.email@example.com
-LinkedIn: Your LinkedIn Profile
-GitHub: Your GitHub Profile
+Email: brandonvnote@gmail.com
+[LinkedIn:](www.linkedin.com/in/brandon-van-note-b99216259)
+[GitHub:](https://github.com/brandonvnote)
