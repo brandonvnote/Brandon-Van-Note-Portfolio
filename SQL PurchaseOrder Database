@@ -1,0 +1,97 @@
+--Create a Database for a purchase order system
+--Then Populate the tables using SQL SERVER MANAGEMENT STUDIO (SMSS)
+
+CREATE TABLE Employee (
+    EmpID CHAR(6) PRIMARY KEY,
+    EmpLastName VARCHAR(30) NOT NULL,
+    EmpFirstName VARCHAR(30) NOT NULL,
+    EmpEmail VARCHAR(30),
+    EmpPhone CHAR(15) NOT NULL,
+    EmpMgrID CHAR(6),
+    FOREIGN KEY (EmpMgrID) REFERENCES Employee(EmpID)
+);
+CREATE TABLE Vendor (
+    VendorID CHAR(5) PRIMARY KEY,
+    VendorName VARCHAR(30) NOT NULL,
+    VendorAddress1 VARCHAR(30) NOT NULL,
+    VendorAddress2 VARCHAR(30),
+    VendorCity VARCHAR(20) NOT NULL,
+    VendorState CHAR(2) NOT NULL,
+    VendorZip VARCHAR(12) NOT NULL,
+    VendorEmail VARCHAR(30),
+    VendorContact VARCHAR(30),
+    VendorPhone CHAR(15) NOT NULL,
+    FirstBuyDate DATETIME
+);
+CREATE TABLE ProductType (
+    ProductTypeID CHAR(2) PRIMARY KEY NOT NULL,
+    Description VARCHAR(30) NOT NULL
+);
+CREATE TABLE Product (
+    ProductID CHAR(5) PRIMARY KEY,
+    ProductDescription VARCHAR(30) NOT NULL,
+    UOM CHAR(10),
+    EOQ DECIMAL(6, 2),
+    QOH DECIMAL(8, 2) NOT NULL,
+    QOHDateUpdated DATETIME,
+    ProductTypeID CHAR(2) NOT NULL,
+    FOREIGN KEY (ProductTypeID) REFERENCES ProductType(ProductTypeID)
+);
+CREATE TABLE PurchaseHistory (
+    HistoryID INT PRIMARY KEY IDENTITY(1,1),
+    ProductID CHAR(5) NOT NULL,
+    DatePurchased DATETIME NOT NULL,
+    Qty DECIMAL(8,2) NOT NULL,
+    Price MONEY NOT NULL,
+    QtyReceivedOnTime DECIMAL(8,2),
+    VendorID CHAR(5),
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+    FOREIGN KEY (VendorID) REFERENCES Vendor(VendorID)
+);
+CREATE TABLE VendorReview (
+    ReviewID INT PRIMARY KEY IDENTITY(10, 10),
+    ReviewDate DATETIME NOT NULL,
+    ReviewTitle VARCHAR(50) NOT NULL,
+    ReviewRating INT NOT NULL CHECK (ReviewRating BETWEEN 1 AND 5),
+    ReviewComments VARCHAR(500),
+    ProductID CHAR(5),
+    VendorID CHAR(5) NOT NULL,
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+    FOREIGN KEY (VendorID) REFERENCES Vendor(VendorID)
+);
+CREATE TABLE PurchaseOrder (
+    PONumber CHAR(6) PRIMARY KEY,
+    PODatePlaced DATETIME NOT NULL,
+    PODateNeeded DATETIME,
+    Terms VARCHAR(15),
+    Conditions VARCHAR(15),
+    BuyerEmpID CHAR(6),
+    VendorID CHAR(5) NOT NULL,
+    FOREIGN KEY (BuyerEmpID) REFERENCES Employee(EmpID),
+    FOREIGN KEY (VendorID) REFERENCES Vendor(VendorID)
+);
+CREATE TABLE PurchaseOrderLine (
+    POLineID INT PRIMARY KEY,
+    PONumber CHAR(6) NOT NULL,
+    ProductID CHAR(5) NOT NULL,
+    QtyOrdered DECIMAL(6,2) CHECK (QtyOrdered > 0) NOT NULL,
+    Price MONEY NOT NULL,
+    DateNeeded DATETIME NOT NULL,
+    FOREIGN KEY (PONumber) REFERENCES PurchaseOrder(PONumber),
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
+);
+CREATE TABLE Condition (
+    ConditionID CHAR(2) PRIMARY KEY,
+    ConditionDescription VARCHAR(30) NOT NULL
+);
+CREATE TABLE Receiver (
+    ReceiverID INT PRIMARY KEY IDENTITY(1,1),
+    DateReceived DATETIME NOT NULL,
+    QtyReceived DECIMAL(6,2) CHECK (QtyReceived > 0) NOT NULL,
+    ConditionID CHAR(2) NOT NULL,
+    ReceiveEmpId CHAR(6),
+    POLineID INT,
+    FOREIGN KEY (ConditionID) REFERENCES Condition(ConditionID),
+    FOREIGN KEY (ReceiveEmpId) REFERENCES Employee(EmpID),
+    FOREIGN KEY (POLineID) REFERENCES PurchaseOrderLine(POLineID)
+);
