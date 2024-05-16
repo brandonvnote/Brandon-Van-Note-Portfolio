@@ -1,5 +1,5 @@
---Wrote a stored procedure that creates and populates one new table.
---Execute the procedure and SELECT statement
+**Wrote a stored procedure that creates and populates one new table**
+**Execute the procedure and SELECT statement**
 
 CREATE PROCEDURE ClosedPurchaseOrdersToPOClosed
 AS
