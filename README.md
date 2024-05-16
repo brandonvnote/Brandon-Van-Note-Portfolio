@@ -7,5 +7,5 @@ For any queries or further information, feel free to reach out to me:
 
 Email: brandonvnote@gmail.com
 
-**[LinkedIn]**(www.linkedin.com/in/brandon-van-note)
+LinkedIn: (www.linkedin.com/in/brandon-van-note)
 
