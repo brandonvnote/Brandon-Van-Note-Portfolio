@@ -17,15 +17,40 @@ ORDER BY
     MONTH(PurchaseOrder.PODateNeeded) DESC,
     PurchaseOrder.PODateNeeded DESC;
 
---Finds Vendors who do not have reviews joining Vendor table and VendorReview Table
+--Summarizes the receiving status of every line with the PurchaseOrderLine table
+--CASE statements for receiving statuses
 SELECT
-  Vendor.VendorID,
-  Vendor.VendorName,
-  Vendor.VendorEmail,
-  Vendor.FirstBuyDate
-FROM Vendor
-LEFT JOIN VendorReview ON Vendor.VendorID = VendorReview.VendorID
-WHERE VendorReview.VendorID IS NULL;
+    PurchaseOrder.PONumber,
+    Vendor.VendorName,
+    PurchaseOrderLine.ProductID,
+    Product.ProductDescription,
+    PurchaseOrderLine.DateNeeded AS ProductDateNeeded,
+    PurchaseOrderLine.QtyOrdered AS QuantityOrdered,
+    SUM(ISNULL(Receiver.QtyReceived, 0)) AS TotalQuantityReceived,
+    PurchaseOrderLine.QtyOrdered - SUM(ISNULL(Receiver.QtyReceived, 0)) AS QuantityRemainingToBeReceived,
+	CASE
+        WHEN PurchaseOrderLine.QtyOrdered - SUM(ISNULL(Receiver.QtyReceived, 0)) = 0 THEN 'Complete'
+        WHEN PurchaseOrderLine.QtyOrdered - SUM(ISNULL(Receiver.QtyReceived, 0)) < 0 THEN 'Over Shipment'
+        WHEN PurchaseOrderLine.QtyOrdered - SUM(ISNULL(Receiver.QtyReceived, 0)) > 0 THEN 'Partial Shipment'
+        ELSE 'Not Received'
+    END AS ShippingStatus
+FROM 
+    PurchaseOrder
+JOIN 
+    PurchaseOrderLine ON PurchaseOrder.PONumber = PurchaseOrderLine.PONumber
+JOIN 
+    Product ON PurchaseOrderLine.ProductID = Product.ProductID
+JOIN 
+    Vendor ON PurchaseOrder.VendorID = Vendor.VendorID
+LEFT JOIN 
+    Receiver ON PurchaseOrderLine.POLineID = Receiver.POLineID
+GROUP BY 
+    PurchaseOrder.PONumber,
+    Vendor.VendorName,
+    PurchaseOrderLine.ProductID,
+    Product.ProductDescription,
+    PurchaseOrderLine.DateNeeded,
+    PurchaseOrderLine.QtyOrdered;
 
 --Lists all products in the reciever table that were recieved in a damaged state
 --Utilizes a LIKE condition to find all instances of "damage"
