@@ -1,5 +1,5 @@
---Create a Database for a purchase order system
---Then Populate the tables using SQL SERVER MANAGEMENT STUDIO (SMSS)
+**Create a Database for a purchase order system**
+**Then Populate the tables using SQL SERVER MANAGEMENT STUDIO (SMSS)**
 
 CREATE TABLE Employee (
     EmpID CHAR(6) PRIMARY KEY,
