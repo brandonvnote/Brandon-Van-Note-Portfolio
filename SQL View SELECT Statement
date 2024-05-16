@@ -1,0 +1,36 @@
+**Create a view to then find the employee responsible for the most purchase orders**
+
+CREATE VIEW PurchaseOrderSummary AS
+SELECT 
+    e.EmpID,
+    e.EmpLastName,
+    e.EmpFirstName,
+    COUNT(DISTINCT po.PONumber) AS CountOfPOs,
+    COUNT(pol.POLineID) AS CountOfPOLines,
+    SUM(pol.QtyOrdered) AS TotalQtyOrdered,
+    SUM(pol.QtyOrdered * pol.Price) AS TotalExtendedPrice
+FROM 
+    Employee e
+LEFT JOIN 
+    PurchaseOrder po ON e.EmpID = po.BuyerEmpID
+LEFT JOIN 
+    PurchaseOrderLine pol ON po.PONumber = pol.PONumber
+WHERE 
+    po.PONumber IS NOT NULL
+GROUP BY 
+    e.EmpID,
+    e.EmpLastName,
+    e.EmpFirstName
+
+SELECT TOP 1
+  EmpID,
+  EmpLastName,
+  EmpFirstName,
+  CountOfPOs,
+	CountOfPOLines,
+	TotalQtyOrdered,
+	TotalExtendedPrice
+FROM 
+    PurchaseOrderSummary
+ORDER BY 
+    CountOfPOs DESC;
